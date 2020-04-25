@@ -1,0 +1,28 @@
+Aim	PBS script file name	Output name
+1) FastQC testing	FastQC 	*.fastq.gz
+2) Merging the reads 	read_merge 	merged_S1_R*.fastq
+3) Mapping the samples to reference genome 	S1_129(jf1)_map 	S1_129(jf1).bam
+4) Assemble and annotate the genome 	cufflinks_S1_129 	cufflinks_S1_129
+5) Merge the assemblies and annotate using Ensembl reference 	cuffmerge 	merged.gtf
+6) Split the assemblies into respective strands 	S1_129_filt 	S1_129_strand1(2).bam
+7) *Convert the reads to bed format 	convert_bed1 	S1_129_strand1(2).bed
+8) **Sort the file based on the chr number 	bedsort1 	S1_129(jf1)_1(2)_sort.bed
+9) Find the SNPs that intersect with the reads 	intersectSNP1 	S1_129(jf1)_s1(2)_snps
+10) 		
+11) Split the positive and negative strands of the genes file 	GTFstrand_split 	genes_forward.gtf
+12) SNP F and R read intersect 	snp_intersect_F(/B) 	S12_129(jf1)_F(B)_intersect
+"13) cut out unnecessary fields (1-9,11,20 needed)"	cut_seq_new 	S12_129(jf1)_F(B)_cut
+14) Select only the Xchr intersects and merge 129 & jf1 one after the other for each sample 	"Xpick1(2,3)"	S12_F(B)_X_intersect
+15) add total read count column to end by adding 129 & jf1 reads that were mapped ($12 and $24) 	S12_F_X_totRC 	S12_F(B)_X_totRC
+16) cut out all rows that have totRC=0 	non0_reads 	S12_F(B)_X_non0
+17) find percentage of 129 and jf1 reads 	%129_jf1 	S12_F(B)_X_read%
+18) Extract the gene name and Transcript ID and paste it to end of file 	add_geneID 	S12_F_X_read%_gene_det
+19) Find the avg % of reads based on the no. of repeated TID 	read%_occurrence 	S12_F_X_avg1
+20) Concatenate + and - strands for each sample 	concat 	S12_X_avg
+21) Join all samples into one table 	sort_join 	avg_%_table
+"22) Find the difference in %jf1 expression; 12-WT, 13, 14 -mutants.. Thus add 12-13 and 12-14 jf1%"	diff_exp 	diff_express
+		
+23) Run HTcount to find the counts of the no. of overlaps 	HTseq 	count_S1
+24) Run DESeq on the counts obtained 	DEseq 	csv.files and pdf plots
+		
+" ** - If encountering problems, invert the procedure. First sort in bam and then convert to bed."		 
